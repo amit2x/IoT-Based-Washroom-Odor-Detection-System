@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-dark: #1e293b;
+  --color-brand-navy: #0f172a;
+  --color-brand-blue: #2563eb;
+  --color-brand-accent: #1d4ed8;
+  --color-brand-sidebar: #1a2b4b;
+  --color-brand-bg-glow: #0047cc;
+  --color-brand-light-bg: #f8faff;
+  --color-brand-slate-light: #f1f5f9;
+  
+  --color-status-success: #10b981;
+  --color-status-success-bg: #ecfdf5;
+  --color-status-warning: #f59e0b;
+  --color-status-warning-bg: #fffbeb;
+  --color-status-error: #f43f5e;
+  --color-status-error-bg: #fff1f2;
+  --color-status-info: #3b82f6;
+  --color-status-info-bg: #eff6ff;
+  --color-status-debug: #64748b;
+  --color-status-debug-bg: #f8fafc;
+  
+  --font-sans: var(--font-geist-sans), Inter, sans-serif;
+  --font-mono: var(--font-geist-mono), JetBrains Mono, monospace;
+  
+  --shadow-vault-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
+}
+
+:root {
+  --background: #f1f5f9;
+  --foreground: #334155;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+/* Vault login background */
+.vault-bg {
+  background-color: #f8faff;
+  background-image: 
+    linear-gradient(to right, rgba(0, 71, 204, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 71, 204, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.vault-bg-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 255, 0) 70%);
+}
+
+/* Neural pattern background */
+.neural-graphic {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, rgba(255, 255, 255, 1) 70%);
+}
+

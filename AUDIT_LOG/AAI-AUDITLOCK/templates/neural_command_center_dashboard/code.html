@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Neural Command Center - AUDIT_LOCK</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts: Inter for UI, JetBrains Mono for data -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#1e293b',
+              navy: '#0f172a',
+              blue: '#2563eb',
+              accent: '#1d4ed8',
+              sidebar: '#1e293b'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style data-purpose="custom-layout">
+    body {
+      background-color: #f1f5f9;
+      color: #334155;
+    }
+
+    .sidebar-active {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .neural-graphic {
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, rgba(255, 255, 255, 1) 70%);
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased">
+  <!-- BEGIN: Main Dashboard Container -->
+  <div class="flex min-h-screen">
+    <!-- BEGIN: Sidebar -->
+    <aside class="w-64 bg-[#1e293b] text-slate-300 flex flex-col fixed inset-y-0 z-50">
+      <div class="p-6 border-b border-slate-700 flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewbox="0 0 24 24">
+            <path
+              d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.18l7 3.89v7.86l-7 3.89-7-3.89V8.07l7-3.89zM12 7l-5 2.78v5.56l5 2.77 5-2.77V9.78L12 7z">
+            </path>
+          </svg>
+        </div>
+        <span class="font-bold tracking-widest text-white text-lg">AUDIT_LOCK</span>
+      </div>
+      <nav class="flex-1 mt-6 px-4 space-y-2">
+        <p class="text-[10px] uppercase font-bold text-slate-500 tracking-widest px-2 mb-2">Ecosystem</p>
+        <a class="flex items-center space-x-3 p-3 rounded-md hover:bg-slate-800 transition-colors" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path
+              d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="text-sm font-medium">Terminal Admin</span>
+        </a>
+        <a class="sidebar-active flex items-center space-x-3 p-3 rounded-md shadow-lg" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="text-sm font-medium">AI Admin</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3 rounded-md hover:bg-slate-800 transition-colors" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2"></path>
+          </svg>
+          <span class="text-sm font-medium">Logs</span>
+        </a>
+      </nav>
+      <div class="p-6 border-t border-slate-700">
+        <div class="flex items-center space-x-2">
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span class="text-xs font-mono uppercase">System Stable</span>
+        </div>
+      </div>
+    </aside>
+    <!-- END: Sidebar -->
+    <!-- BEGIN: Main Content -->
+    <main class="flex-1 ml-64">
+      <!-- BEGIN: Top Header Bar -->
+      <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-end px-8 space-x-6">
+        <button class="text-slate-400 hover:text-slate-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </button>
+        <div class="flex items-center space-x-3 cursor-pointer">
+          <div
+            class="w-8 h-8 rounded-full border-2 border-blue-600 flex items-center justify-center bg-slate-100 text-blue-600 overflow-hidden">
+            <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z">
+              </path>
+            </svg>
+          </div>
+        </div>
+      </header>
+      <!-- END: Top Header Bar -->
+      <div class="p-8 max-w-7xl mx-auto">
+        <!-- BEGIN: Page Title & Actions -->
+        <div class="flex justify-between items-start mb-8">
+          <div data-purpose="title-section">
+            <h1 class="text-3xl font-bold text-slate-800">Neural Command Center</h1>
+            <p class="text-slate-500 mt-1">Real-time oversight of LLM instances and neural pattern deployments.</p>
+          </div>
+          <div class="flex space-x-3">
+            <button
+              class="bg-white border border-slate-300 px-4 py-2 rounded-md text-sm font-semibold text-slate-700 flex items-center space-x-2 hover:bg-slate-50 transition-colors shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+              <span>Re-Sync</span>
+            </button>
+            <button
+              class="bg-blue-600 px-4 py-2 rounded-md text-sm font-semibold text-white flex items-center space-x-2 hover:bg-blue-700 transition-colors shadow-sm">
+              <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <span>Optimize</span>
+            </button>
+          </div>
+        </div>
+        <!-- END: Page Title & Actions -->
+        <!-- BEGIN: Top Row KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <!-- Avg Latency Card -->
+          <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between h-36">
+            <div class="flex justify-between">
+              <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Avg Latency</div>
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="flex items-baseline space-x-2">
+              <span class="text-4xl font-mono font-bold text-slate-800">142</span>
+              <span class="text-slate-500 font-mono">ms</span>
+            </div>
+          </div>
+          <!-- Total Tokens Card -->
+          <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between h-36">
+            <div class="flex justify-between">
+              <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Total Tokens</div>
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="flex items-baseline space-x-2">
+              <span class="text-4xl font-mono font-bold text-slate-800">2.4</span>
+              <span class="text-slate-500 font-mono text-xl">M</span>
+            </div>
+          </div>
+          <!-- Threats Blocked Card -->
+          <div
+            class="bg-white p-6 rounded-lg border border-l-4 border-l-rose-500 border-slate-200 shadow-sm flex flex-col justify-between h-36">
+            <div class="flex justify-between">
+              <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Threats Blocked</div>
+              <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-4xl font-mono font-bold text-slate-800">12</span>
+              <span
+                class="text-[10px] bg-rose-50 text-rose-600 px-2 py-1 rounded font-bold border border-rose-100 uppercase tracking-tighter leading-none">Active
+                Shield</span>
+            </div>
+          </div>
+          <!-- Model Status Card -->
+          <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between h-36">
+            <div class="flex justify-between items-start">
+              <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Model Status</div>
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2">
+                <div class="h-full bg-emerald-500 w-[99.8%]"></div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono text-slate-500">99.8% Uptime</span>
+                <span class="text-emerald-600 text-xs font-bold font-mono">Optimal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END: Top Row KPI Cards -->
+        <!-- BEGIN: Middle Section (Neural & Origin) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- Neural Pattern Analysis Card -->
+          <div
+            class="lg:col-span-2 bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+              <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                  <path
+                    d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <h3 class="font-bold text-slate-700">Neural Pattern Analysis</h3>
+              </div>
+              <div
+                class="bg-blue-50 text-blue-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-blue-100">
+                Real-time Stream <span
+                  class="ml-1 inline-block w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></span>
+              </div>
+            </div>
+            <div class="flex-1 neural-graphic flex flex-col items-center justify-center p-12 text-center min-h-[400px]">
+              <!-- Diamond Graphic -->
+              <div class="relative w-48 h-48 mb-8 flex items-center justify-center">
+                <div class="absolute inset-0 border-2 border-blue-100 rotate-45 transform scale-110"></div>
+                <div class="absolute inset-0 border-2 border-blue-300 rotate-45 transform"></div>
+                <div class="absolute inset-4 border-2 border-blue-400 rotate-45 transform scale-90"></div>
+                <div
+                  class="absolute inset-8 border-2 border-blue-600 rotate-45 transform scale-75 shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+                </div>
+              </div>
+              <div data-purpose="neural-overlay-text">
+                <h4 class="text-blue-800 font-mono font-bold tracking-widest text-sm mb-2 uppercase">Processing Vector
+                  Clusters</h4>
+                <p class="text-slate-500 text-sm max-w-sm leading-relaxed">
+                  Analyzing multi-dimensional attention maps for divergent output detection.
+                </p>
+              </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 flex items-center text-[10px] text-slate-400 font-mono">
+              <svg class="w-3 h-3 mr-1" fill="currentColor" viewbox="0 0 20 20">
+                <path clip-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  fill-rule="evenodd"></path>
+              </svg>
+              Support: 0x932...AF1
+            </div>
+          </div>
+          <!-- Right Column Cards (Heatmap & Models) -->
+          <div class="flex flex-col space-y-6">
+            <!-- Origin Heatmap Card -->
+            <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-6">Origin Heatmap</div>
+              <div class="space-y-6">
+                <!-- Region 1 -->
+                <div>
+                  <div class="flex justify-between text-xs font-medium text-slate-600 mb-2">
+                    <span>US-East-1 (Nova)</span>
+                    <span class="font-mono text-blue-600">64 %</span>
+                  </div>
+                  <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-700 w-[64%]"></div>
+                  </div>
+                </div>
+                <!-- Region 2 -->
+                <div>
+                  <div class="flex justify-between text-xs font-medium text-slate-600 mb-2">
+                    <span>EU-West-1 (Dublin)</span>
+                    <span class="font-mono text-blue-600">22 %</span>
+                  </div>
+                  <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500 w-[22%]"></div>
+                  </div>
+                </div>
+                <!-- Region 3 -->
+                <div>
+                  <div class="flex justify-between text-xs font-medium text-slate-600 mb-2">
+                    <span>AP-South-1 (Mumbai)</span>
+                    <span class="font-mono text-blue-600">14 %</span>
+                  </div>
+                  <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-400 w-[14%]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Active Models Card -->
+            <div class="bg-[#1e293b] text-slate-300 p-6 rounded-lg shadow-inner flex-1">
+              <div class="text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-4">Active Models</div>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center text-xs py-2 border-b border-slate-700/50">
+                  <div class="flex items-center space-x-3">
+                    <span class="status-dot bg-emerald-500"></span>
+                    <span class="font-mono">Protocol-Alpha-V4</span>
+                  </div>
+                  <span class="text-slate-500 font-mono">L-70B</span>
+                </div>
+                <div class="flex justify-between items-center text-xs py-2 border-b border-slate-700/50">
+                  <div class="flex items-center space-x-3">
+                    <span class="status-dot bg-emerald-500"></span>
+                    <span class="font-mono">Shield-Guardian-LLM</span>
+                  </div>
+                  <span class="text-slate-500 font-mono">L-7B</span>
+                </div>
+                <div class="flex justify-between items-center text-xs py-2">
+                  <div class="flex items-center space-x-3">
+                    <span class="status-dot bg-slate-500"></span>
+                    <span class="font-mono">Legacy-Audit-Node</span>
+                  </div>
+                  <span class="text-slate-500 font-mono italic">Idle</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END: Middle Section -->
+        <!-- BEGIN: AI Engine Logs Table -->
+        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 flex justify-between items-center border-b border-slate-100">
+            <h3 class="font-bold text-slate-800">AI Engine Logs</h3>
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none"
+                  stroke="currentColor" viewbox="0 0 24 24">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"></path>
+                </svg>
+                <input
+                  class="pl-10 pr-4 py-1.5 border border-slate-200 rounded-md text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-64"
+                  placeholder="Filter events..." type="text" />
+              </div>
+              <button class="text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+                  <path
+                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                  </path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-100">
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Timestamp</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Event Type</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Origin ID</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Model</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Latency</th>
+                  <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                </tr>
+              </thead>
+              <tbody class="font-mono text-sm divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4 text-slate-500">2026-06-20 10:00:02.645</td>
+                  <td class="px-6 py-4">
+                    <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[11px] font-bold">PROMPT_EXEC</span>
+                  </td>
+                  <td class="px-6 py-4 text-slate-600">NODE-8821-XP</td>
+                  <td class="px-6 py-4 text-slate-800">Protocol-Alpha-V4</td>
+                  <td class="px-6 py-4 text-slate-600">128ms</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center text-emerald-600 font-bold">
+                      <span class="status-dot bg-emerald-500 mr-2"></span>
+                      200 OK
+                    </div>
+                  </td>
+                </tr>
+                <!-- Repeat for design consistency -->
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4 text-slate-500">2026-06-20 10:00:02.112</td>
+                  <td class="px-6 py-4">
+                    <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[11px] font-bold">PROMPT_EXEC</span>
+                  </td>
+                  <td class="px-6 py-4 text-slate-600">NODE-4192-TY</td>
+                  <td class="px-6 py-4 text-slate-800">Shield-Guardian-LLM</td>
+                  <td class="px-6 py-4 text-slate-600">84ms</td>
+                  <td class="px-6 py-4">
+                    <div class="flex items-center text-emerald-600 font-bold">
+                      <span class="status-dot bg-emerald-500 mr-2"></span>
+                      200 OK
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- END: AI Engine Logs Table -->
+      </div>
+    </main>
+    <!-- END: Main Content -->
+  </div>
+  <!-- END: Main Dashboard Container -->
+</body>
+
+</html>

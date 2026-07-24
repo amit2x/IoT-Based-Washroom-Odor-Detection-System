@@ -1,0 +1,27 @@
+{
+  "name": "aai-dashboard-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend-next-replica-v3",
+    "login-portal",
+    "frontend-next-replica",
+    "AUDIT_LOG/AAI-AUDITLOCK"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend-next-replica-v3",
+    "dev:replica": "npm run dev --workspace=frontend-next-replica",
+    "dev:login": "npm run dev --workspace=login-portal",
+    "dev:audit": "npm run dev --workspace=AUDIT_LOG/AAI-AUDITLOCK",
+    "release": "standard-version",
+    "release:first": "standard-version --first-release",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "postrelease": "git push --follow-tags origin development"
+  },
+  "overrides": {
+    "postcss": "^8.5.10",
+    "sharp": "^0.35.0"
+  }
+}
