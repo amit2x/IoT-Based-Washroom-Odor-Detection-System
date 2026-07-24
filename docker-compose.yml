@@ -1,0 +1,78 @@
+version: '3.8'
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  # EMQX MQTT Broker (Ready for clustering)
+  emqx:
+    image: emqx:5.8
+    container_name: washroom-emqx
+    restart: unless-stopped
+    ports:
+      - "1883:1883"   # MQTT/TCP
+      - "8083:8083"   # MQTT/WS
+      - "18083:18083" # Dashboard
+    environment:
+      # Scalability: Using explicit node name and static discovery prepares 
+      # the broker to easily add node2, node3 etc. in the future.
+      - EMQX_NODE__NAME=emqx@node1.emqx.local
+      - EMQX_CLUSTER__DISCOVERY_STRATEGY=static
+      - EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.local]
+      - EMQX_DASHBOARD__DEFAULT_USERNAME=admin
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx", "ctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  # Redis for Token Buckets & Incident State Machine
+  redis:
+    image: redis:7.2-alpine
+    container_name: washroom-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    # Scalability: We enable basic persistence (RDB). To scale, we can easily 
+    # replace this with Redis Sentinel or Redis Cluster.
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  # PostgreSQL + TimescaleDB for Telemetry Analytics
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: washroom-timescaledb
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=washroom_db
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+      # Maps initialization scripts to create extensions and tables
+      - ./db_init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+volumes:
+  redis_data:
+  timescaledb_data:

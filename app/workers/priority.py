@@ -1,0 +1,25 @@
+import asyncio
+from app.services.queue import queue_router
+from app.services.incident import get_incident_engine
+from app.db.redis import get_redis
+from app.core.logger import logger
+
+async def priority_worker():
+    logger.info("Starting priority queue worker")
+    redis = await get_redis()
+    incident_engine = get_incident_engine(redis)
+    
+    while True:
+        try:
+            payload = await queue_router.priority_queue.get()
+            # Process state machine for incident debouncing
+            await incident_engine.process_reading(payload)
+            
+            # DB writes to TimescaleDB would be added here
+            # await db_manager.execute(...)
+            
+            queue_router.priority_queue.task_done()
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Error in priority worker: {e}")
