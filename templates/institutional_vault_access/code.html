@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AUDIT_LOCK | Institutional Vault Access</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts for Monospace styling -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            'audit-blue': '#0047cc',
+            'audit-bg': '#f8faff',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-background">
+    /* Grid background pattern */
+    body {
+      background-color: #f8faff;
+      background-image: 
+        linear-gradient(to right, rgba(0, 71, 204, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 71, 204, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    
+    /* Radial gradient highlight in the center */
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 255, 0) 70%);
+      z-index: -1;
+    }
+  </style>
+<style data-purpose="component-styles">
+    /* Custom shadow and border for the login card */
+    .vault-card {
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Input focus states */
+    .vault-input:focus {
+      outline: none;
+      border-color: #0047cc;
+      box-shadow: 0 0 0 2px rgba(0, 71, 204, 0.1);
+    }
+  </style>
+</head>
+<body class="font-mono text-slate-800 min-h-screen flex flex-col items-center justify-between">
+<div class="bg-glow"></div>
+<!-- BEGIN: MainContent -->
+<main class="flex-grow flex flex-col items-center justify-center w-full px-4 pt-12 pb-24">
+<!-- BEGIN: BrandHeader -->
+<section class="text-center mb-10" data-purpose="brand-identity">
+<div class="inline-flex items-center justify-center w-12 h-12 bg-audit-blue text-white rounded mb-4 shadow-lg">
+<svg class="h-8 w-8" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h1 class="text-4xl font-bold tracking-widest text-slate-900 mb-1">AUDIT_LOCK</h1>
+<p class="text-xs tracking-[0.2em] text-slate-500 uppercase">Institutional Vault Access</p>
+</section>
+<!-- END: BrandHeader -->
+<!-- BEGIN: LoginCard -->
+<section class="vault-card bg-white w-full max-w-md p-10 rounded-sm" data-purpose="login-container">
+<form class="space-y-6">
+<!-- Administrator ID Field -->
+<div class="space-y-2">
+<label class="flex items-center gap-2 text-xs font-medium text-slate-600 uppercase tracking-wider">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Administrator ID
+          </label>
+<input class="vault-input w-full px-4 py-3 border border-slate-300 rounded-sm font-mono text-lg tracking-wider" type="text" value="ADM-7700-X"/>
+</div>
+<!-- Secret Access Key Field -->
+<div class="space-y-2">
+<label class="flex items-center gap-2 text-xs font-medium text-slate-600 uppercase tracking-wider">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Secret Access Key
+          </label>
+<input class="vault-input w-full px-4 py-3 border border-slate-300 rounded-sm font-mono text-lg tracking-widest" type="password" value="•••••••••••••"/>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-audit-blue hover:bg-blue-700 text-white font-medium py-4 rounded-sm flex items-center justify-center gap-3 transition-colors shadow-md" type="submit">
+          Initialize Session
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<!-- Divider -->
+<div class="relative flex items-center justify-center py-2">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200"></div>
+</div>
+<span class="relative bg-white px-3 text-[10px] text-slate-400 font-bold uppercase tracking-widest">OR</span>
+</div>
+<!-- Biometric Option -->
+<button class="w-full border border-audit-blue text-audit-blue hover:bg-blue-50 font-medium py-4 rounded-sm flex items-center justify-center gap-3 transition-colors" type="button">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09m15.502-12.12A18.956 18.956 0 0012 2c-2.8 0-5.4 1.1-7.36 2.88l.053.054a10.011 10.011 0 004.937 13.983c.153.064.31.122.467.174M12 11V7m0 5c0 3.07 1.64 5.756 4.101 7.248M12 11h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Biometric Handshake
+        </button>
+</form>
+</section>
+<!-- END: LoginCard -->
+<!-- BEGIN: UtilityLinks -->
+<div class="w-full max-w-md flex justify-between mt-6 px-1 text-[11px] text-slate-500 uppercase tracking-wider" data-purpose="utility-navigation">
+<a class="flex items-center gap-1.5 hover:text-audit-blue transition-colors" href="#">
+<svg class="h-3 w-3" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Reset Credentials
+      </a>
+<a class="flex items-center gap-1.5 hover:text-audit-blue transition-colors" href="#">
+        Contact Security
+        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</div>
+<!-- END: UtilityLinks -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Footer -->
+<footer class="w-full bg-white border-t border-slate-200 py-3 px-6 text-[10px] uppercase tracking-widest text-slate-500 flex flex-wrap justify-between items-center" data-purpose="status-bar">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        System Ready
+      </div>
+<div class="hidden md:flex items-center gap-2">
+<svg class="h-3 w-3" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Server: <span class="text-slate-800">US-EAST-1_NODE_B</span>
+</div>
+</div>
+<div class="flex gap-8">
+<div>Ver: <span class="text-slate-800">v4.12.08-PRIME</span></div>
+<div class="hidden sm:block">Enc: <span class="text-slate-800">AES-GCM-256</span></div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>
