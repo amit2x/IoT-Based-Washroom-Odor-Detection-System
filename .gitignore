@@ -34,3 +34,7 @@ Thumbs.db
 CLAUDE.md
 AGENTS.md
 
+
+leaks_report.json
+.DS_Store
+.venv/

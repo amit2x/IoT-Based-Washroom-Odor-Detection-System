@@ -1,14 +1,22 @@
-# Changelog
+## [unreleased]
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+### 🚀 Features
 
-## [1.1.0](https://github.com/amit2x/IoT-Based-Washroom-Odor-Detection-System/compare/v1.0.1...v1.1.0) (2026-07-24)
+- Add FastAPI backend for washroom monitoring system
+## [1.1.0] - 2026-07-24
 
+### 🚀 Features
 
-### Features
+- Add audit log table with filters
 
-* add audit log table with filters ([f851ce6](https://github.com/amit2x/IoT-Based-Washroom-Odor-Detection-System/commit/f851ce6fd40bc7883523b4277c9509c92a121ce9))
+### ⚙️ Miscellaneous Tasks
 
-### 1.0.1 (2026-07-24)
+- *(release)* 0.1.0
+- *(release)* 0.1.1
+- *(release)* 1.1.0
+## [1.0.1] - 2026-07-24
 
-* **Added:** Merge Dashboard UI,
+### ⚙️ Miscellaneous Tasks
+
+- Import local changes
+- *(release)* 1.0.1
