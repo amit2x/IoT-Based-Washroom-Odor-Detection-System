@@ -1,9 +1,11 @@
+from datetime import datetime, timezone
 from redis.asyncio import Redis
 from app.models.schemas import TelemetryPayload
 from app.models.domain import IncidentState
 from app.core.config import settings
 from app.core.logger import logger
 from app.services.escalation import escalation_engine
+from app.db.postgres import db_manager
 
 class IncidentEngine:
     def __init__(self, redis: Redis):
@@ -23,12 +25,12 @@ class IncidentEngine:
         
         if whi >= settings.WHI_WARNING_THRESHOLD:
             # Recovering or Normal
-            await self._set_state(washroom_id, payload.terminal, IncidentState.NORMAL.value)
+            await self._set_state(washroom_id, payload.terminal, IncidentState.NORMAL.value, whi=whi, timestamp=payload.timestamp)
             await self.redis.set(debounce_key, 0)
             
         elif whi >= settings.WHI_CRITICAL_THRESHOLD and whi < settings.WHI_WARNING_THRESHOLD:
             # Warning state
-            await self._set_state(washroom_id, payload.terminal, IncidentState.PENDING_ALERT.value)
+            await self._set_state(washroom_id, payload.terminal, IncidentState.PENDING_ALERT.value, whi=whi, timestamp=payload.timestamp)
             await self.redis.set(debounce_key, 0)
             
         else:
@@ -36,21 +38,42 @@ class IncidentEngine:
             if current_state != IncidentState.ACTIVE_INCIDENT.value:
                 debounce_count = await self.redis.incr(debounce_key)
                 if debounce_count >= settings.DEBOUNCE_THRESHOLD:
-                    await self._set_state(washroom_id, payload.terminal, IncidentState.ACTIVE_INCIDENT.value)
+                    await self._set_state(washroom_id, payload.terminal, IncidentState.ACTIVE_INCIDENT.value, whi=whi, timestamp=payload.timestamp)
                     logger.info(f"Washroom {washroom_id} entered ACTIVE_INCIDENT state")
 
-    async def _set_state(self, washroom_id: str, terminal: str, new_state: str):
+    async def _set_state(self, washroom_id: str, terminal: str, new_state: str, whi: float = None, timestamp: datetime = None):
         state_key = f"state:washroom:{washroom_id}"
         old_state = await self.redis.get(state_key)
+        old_state_val = old_state if old_state is not None else IncidentState.NORMAL.value
         
-        if old_state != new_state:
+        if old_state_val != new_state:
             await self.redis.set(state_key, new_state)
+            
+            event_time = timestamp or datetime.now(timezone.utc)
+            
+            # Persist to database
+            if db_manager.pool:
+                try:
+                    await db_manager.execute(
+                        """
+                        INSERT INTO incident_events (time, washroom_id, terminal, old_state, new_state, whi)
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                        """,
+                        event_time, washroom_id, terminal, old_state_val, new_state, whi
+                    )
+                    logger.info(f"Persisted incident event for {washroom_id}: {old_state_val} -> {new_state}")
+                except Exception as e:
+                    logger.error(f"Failed to persist incident event for {washroom_id}: {e}")
+            
             # Notify escalation engine
             await escalation_engine.evaluate_floor_state(
                 terminal=terminal,
                 washroom_id=washroom_id,
-                new_state=new_state
+                new_state=new_state,
+                redis=self.redis,
+                timestamp=event_time
             )
 
 def get_incident_engine(redis: Redis) -> IncidentEngine:
     return IncidentEngine(redis)
+

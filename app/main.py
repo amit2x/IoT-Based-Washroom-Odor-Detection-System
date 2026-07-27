@@ -10,6 +10,7 @@ from app.db.postgres import db_manager
 from app.services.mqtt import mqtt_subscriber
 from app.workers.priority import priority_worker
 from app.workers.normal import normal_worker
+from app.services.batcher import telemetry_batcher
 from app.core.logger import logger
 
 bg_tasks = []
@@ -22,12 +23,15 @@ async def lifespan(app: FastAPI):
     await db_manager.connect()
     # Redis is implicitly initialized via pool but we can ping it here if needed
     
-    # 2. Start workers
+    # 2. Start telemetry batcher monitor
+    await telemetry_batcher.start_monitor()
+    
+    # 3. Start workers
     bg_tasks.append(asyncio.create_task(priority_worker()))
     for _ in range(3):
         bg_tasks.append(asyncio.create_task(normal_worker()))
         
-    # 3. Start MQTT Subscriber last so it starts pushing to queues only when workers are ready
+    # 4. Start MQTT Subscriber last so it starts pushing to queues only when workers are ready
     bg_tasks.append(asyncio.create_task(mqtt_subscriber.start()))
     
     yield
@@ -39,6 +43,7 @@ async def lifespan(app: FastAPI):
         task.cancel()
         
     await asyncio.gather(*bg_tasks, return_exceptions=True)
+    await telemetry_batcher.stop_monitor()
     await db_manager.disconnect()
     await redis_manager.close()
 
@@ -52,6 +57,7 @@ async def health_check():
     return {"status": "ok"}
 
 if __name__ == "__main__":
+
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
 
