@@ -1,4 +1,4 @@
-# AAI - AUDITLOCK
+# AAI - AUDITLOG
 
 A robust security audit logging, system monitoring, and administration terminal dashboard built with Next.js.
 
