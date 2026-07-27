@@ -1,9 +1,6 @@
-Based on both codebases and the architectural evolution we’ve discussed, Mark 2 (M2) is much more than a bug-fix release—it represents a transition from a functional prototype into a production-oriented backend. Below is a structured changelog that you can include in your project diary or documentation.
-
-⸻
 
 Intelligent Washroom Monitoring & Automated Incident Management System
-
+Latest update:
 Mark 2 (M2) Changelog
 
 Overview
