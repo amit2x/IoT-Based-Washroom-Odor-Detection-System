@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from app.services.rate_limit import RateLimiter
 from app.services.queue import queue_router
 from app.db.redis import get_redis
+from app.services.audit import audit_batcher
 
 class MQTTSubscriber:
     def __init__(self):
@@ -46,6 +47,13 @@ class MQTTSubscriber:
     async def process_message(self, message, rate_limiter: RateLimiter):
         topic = str(message.topic)
         payload_bytes = message.payload
+
+        # Audit tap - capture raw message before parsing
+        try:
+            await audit_batcher.push_raw(topic, payload_bytes)
+        except Exception as e:
+            logger.warning(f"Failed to push message to raw audit log (topic={topic}): {e}")
+
         
         # 1. Parse JSON
         try:

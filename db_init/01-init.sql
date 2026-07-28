@@ -57,3 +57,20 @@ SELECT create_hypertable('floor_escalation_events', 'time', if_not_exists => TRU
 -- Create indexes for floor_escalation_events
 CREATE INDEX IF NOT EXISTS ix_floor_escalation_events_floor_time ON floor_escalation_events (floor, time DESC);
 
+-- Create raw_telemetry_audit table
+CREATE TABLE IF NOT EXISTS raw_telemetry_audit (
+    received_at TIMESTAMPTZ NOT NULL,
+    topic TEXT NOT NULL,
+    raw_payload TEXT NOT NULL
+);
+
+-- Convert to a TimescaleDB hypertable
+SELECT create_hypertable('raw_telemetry_audit', 'received_at', if_not_exists => TRUE);
+
+-- Create indexes for raw_telemetry_audit
+CREATE INDEX IF NOT EXISTS ix_raw_telemetry_audit_topic_received_at ON raw_telemetry_audit (topic, received_at DESC);
+
+-- Add retention policy
+SELECT add_retention_policy('raw_telemetry_audit', INTERVAL '14 days', if_not_exists => TRUE);
+
+

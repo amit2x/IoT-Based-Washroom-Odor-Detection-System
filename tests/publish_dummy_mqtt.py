@@ -1,11 +1,13 @@
 import asyncio
 import json
+import os
 from datetime import datetime, timezone
 import aiomqtt
 
 async def publish_messages():
-    print("Connecting to local MQTT broker on localhost:1883...")
-    async with aiomqtt.Client("localhost", 1883) as client:
+    mqtt_host = os.getenv("MQTT_HOST", "localhost")
+    print(f"Connecting to local MQTT broker on {mqtt_host}:1883...")
+    async with aiomqtt.Client(mqtt_host, 1883) as client:
         
         # Helper to create telemetry payload dict
         def make_payload(device_id: str, raw_whi: float):
@@ -21,6 +23,13 @@ async def publish_messages():
                 "abandon_rate_percent": 0.0,
                 "raw_whi": raw_whi
             }
+            # def make_payload(device_id: str, raw_whi: float):
+            # return {
+            #     "device_id": "broken_sensor_99",
+            #     "raw_whi": "CRITICAL_FAILURE_TEXT_NOT_A_FLOAT",
+            #     "missing_time_entirely": True
+            #     # Note: 'time', 'timestamp', and all other fields are removed!
+            # }
 
         # 1. Send 3 critical messages for L2_WashroomA
         print("\nPublishing 3 critical telemetry readings for L2_WashroomA...")

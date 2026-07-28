@@ -21,25 +21,27 @@ class IncidentEngine:
         debounce_key = f"debounce:{washroom_id}"
         state_key = f"state:washroom:{washroom_id}"
 
+        # Retrieve the active state or fallback to default
         current_state = await self.redis.get(state_key) or IncidentState.NORMAL.value
-        
+
         if whi >= settings.WHI_WARNING_THRESHOLD:
-            # Recovering or Normal
-            await self._set_state(washroom_id, payload.terminal, IncidentState.NORMAL.value, whi=whi, timestamp=payload.timestamp)
-            await self.redis.set(debounce_key, 0)
-            
+            if current_state == IncidentState.ACTIVE_INCIDENT.value:
+                await self._set_state(washroom_id, payload.terminal, IncidentState.RESOLVED.value, whi=whi, timestamp=payload.timestamp)
+                await self._set_state(washroom_id, payload.terminal, IncidentState.NORMAL.value, whi=whi, timestamp=payload.timestamp)
+            else:
+                await self._set_state(washroom_id, payload.terminal, IncidentState.NORMAL.value, whi=whi, timestamp=payload.timestamp)
+            await self.redis.delete(debounce_key)          # was: await self.redis.set(debounce_key, 0)
+
         elif whi >= settings.WHI_CRITICAL_THRESHOLD and whi < settings.WHI_WARNING_THRESHOLD:
-            # Warning state
             await self._set_state(washroom_id, payload.terminal, IncidentState.PENDING_ALERT.value, whi=whi, timestamp=payload.timestamp)
-            await self.redis.set(debounce_key, 0)
-            
+            await self.redis.delete(debounce_key)          # was: await self.redis.set(debounce_key, 0)
+
         else:
-            # Critical reading (WHI < 30)
             if current_state != IncidentState.ACTIVE_INCIDENT.value:
                 debounce_count = await self.redis.incr(debounce_key)
+                await self.redis.expire(debounce_key, 3600)   # new line: TTL safety net
                 if debounce_count >= settings.DEBOUNCE_THRESHOLD:
-                    await self._set_state(washroom_id, payload.terminal, IncidentState.ACTIVE_INCIDENT.value, whi=whi, timestamp=payload.timestamp)
-                    logger.info(f"Washroom {washroom_id} entered ACTIVE_INCIDENT state")
+                    ...
 
     async def _set_state(self, washroom_id: str, terminal: str, new_state: str, whi: float = None, timestamp: datetime = None):
         state_key = f"state:washroom:{washroom_id}"
@@ -51,7 +53,7 @@ class IncidentEngine:
             
             event_time = timestamp or datetime.now(timezone.utc)
             
-            # Persist to database
+            # Persist historical event data to TimescaleDB
             if db_manager.pool:
                 try:
                     await db_manager.execute(
@@ -65,7 +67,7 @@ class IncidentEngine:
                 except Exception as e:
                     logger.error(f"Failed to persist incident event for {washroom_id}: {e}")
             
-            # Notify escalation engine
+            # Notify downstream escalation engine of state adjustment
             await escalation_engine.evaluate_floor_state(
                 terminal=terminal,
                 washroom_id=washroom_id,
@@ -76,4 +78,3 @@ class IncidentEngine:
 
 def get_incident_engine(redis: Redis) -> IncidentEngine:
     return IncidentEngine(redis)
-
